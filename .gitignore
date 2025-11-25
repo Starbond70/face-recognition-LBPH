@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.idea/
+
+# Project Data (Generated)
+data/
+TrainingImageLabel/
+StudentDetails/
+TrainingImage/
+Attendance/
+
+# System
+.DS_Store
