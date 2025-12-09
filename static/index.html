@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-face-smile-beam"></i> AttendMax
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </li>
+                <li data-target="registration">
+                    <i class="fa-solid fa-user-plus"></i> Registration
+                </li>
+                <li data-target="training">
+                    <i class="fa-solid fa-brain"></i> Training
+                </li>
+                <li data-target="attendance">
+                    <i class="fa-solid fa-clipboard-user"></i> Attendance
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="page active">
+                <header>
+                    <h1>Dashboard</h1>
+                    <p>Overview of the system status</p>
+                </header>
+                
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="icon-box blue"><i class="fa-solid fa-users"></i></div>
+                        <div class="info">
+                            <h3>Total Students</h3>
+                            <h2 id="total-students-count">0</h2>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="icon-box green"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="info">
+                            <h3>Present Today</h3>
+                            <h2 id="today-attendance-count">0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card table-card">
+                    <h3>Registered Students</h3>
+                    <div class="table-container">
+                        <table id="students-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="danger-zone">
+                    <h3>Danger Zone</h3>
+                    <div class="card danger-card">
+                        <p>Clear all data including students, images, and logs.</p>
+                        <div class="input-group">
+                            <input type="password" id="clear-password" placeholder="Enter Password">
+                            <button id="btn-clear-data" class="btn danger">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Registration Section -->
+            <section id="registration" class="page">
+                <header>
+                    <h1>New Registration</h1>
+                    <p>Add a new student to the database</p>
+                </header>
+
+                <div class="split-view">
+                    <div class="card form-card">
+                        <h3>Student Details</h3>
+                        <div class="form-group">
+                            <label>Student ID</label>
+                            <input type="text" id="reg-id" placeholder="e.g. 101">
+                        </div>
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="reg-name" placeholder="e.g. John Doe">
+                        </div>
+                        <button id="btn-start-capture" class="btn primary">Start Capture</button>
+                        <div id="reg-message" class="message-box"></div>
+                    </div>
+
+                    <div class="card video-card">
+                        <h3>Camera Feed</h3>
+                        <div class="video-container" id="reg-video-container">
+                            <div class="placeholder-text">Camera is off</div>
+                            <img id="reg-video-feed" src="" alt="Video Feed" style="display:none;">
+                        </div>
+                        <p class="hint">The camera will capture 30 images automatically.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Training Section -->
+            <section id="training" class="page">
+                <header>
+                    <h1>Model Training</h1>
+                    <p>Train the recognition model with new data</p>
+                </header>
+
+                <div class="center-content">
+                    <div class="card train-card">
+                        <div class="icon-large"><i class="fa-solid fa-microchip"></i></div>
+                        <p>After adding new students, train the model to recognize them.</p>
+                        <button id="btn-train" class="btn primary large">Train Model</button>
+                        <div id="train-status" class="status-msg"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section id="attendance" class="page">
+                <header>
+                    <h1>Mark Attendance</h1>
+                    <p>Real-time face recognition</p>
+                </header>
+
+                <div class="split-view large-left">
+                    <div class="card video-card">
+                        <div class="toolbar">
+                            <h3>Live Feed</h3>
+                            <button id="btn-toggle-camera" class="btn secondary">Start Camera</button>
+                        </div>
+                        <div class="video-container large">
+                            <div class="placeholder-text">Camera is off</div>
+                            <img id="att-video-feed" src="" alt="Video Feed" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div class="card list-card">
+                        <h3>Recognized</h3>
+                        <ul id="recognized-list" class="scrolling-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                        <div class="actions">
+                            <button id="btn-save-attendance" class="btn success">Save Attendance</button>
+                            <button id="btn-clear-session" class="btn warning">Clear List</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Action Successful</div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

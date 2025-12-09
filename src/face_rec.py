@@ -5,6 +5,15 @@ from PIL import Image
 from src.data_handler import DataManager
 
 class FaceRecognitionSystem:
+    """
+    Handles all Computer Vision tasks for the attendance system.
+    
+    This class wraps OpenCV functionality to:
+    - Capture images from the webcam for training.
+    - Train the LBPH face recognition model.
+    - specialized generators to stream video frames to the Streamlit UI.
+    - Perform real-time face detection and recognition.
+    """
     def __init__(self, cascade_path="haarcascade_frontalface_default.xml"):
         self.data_manager = DataManager()
         self.cascade_path = cascade_path
@@ -13,7 +22,7 @@ class FaceRecognitionSystem:
         self.detector = cv2.CascadeClassifier(self.cascade_path)
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-    def capture_images(self, student_id, name, limit=30, cam_index=1):
+    def capture_images(self, student_id, name, limit=30, cam_index=0):
         """
         Captures images for training.
         Returns: (success, message)
@@ -55,9 +64,18 @@ class FaceRecognitionSystem:
 
         return True, f"Captured {sample_num} images for {name}."
 
-    def capture_frames(self, student_id, name, limit=30, cam_index=1):
+    def capture_frames(self, student_id, name, limit=30, cam_index=0):
         """
         Generator that yields frames and progress for Streamlit registration.
+        
+        Workflow:
+        1. Open the camera.
+        2. Read frames in a loop.
+        3. Detect faces in each frame.
+        4. If a face is found, crop and save it to 'training_images' folder with unique filename.
+        5. Yield the annotated frame (with rectangle) back to the UI for display.
+        6. Stop when 'limit' number of images are captured.
+        
         Yields: (frame_rgb, sample_num, total_limit)
         """
         import time
@@ -103,7 +121,7 @@ class FaceRecognitionSystem:
         finally:
             cam.release()
 
-    def preview_frames(self, cam_index=1):
+    def preview_frames(self, cam_index=0):
         """
         Generator that yields frames for preview (no saving).
         Yields: frame_rgb
@@ -134,6 +152,14 @@ class FaceRecognitionSystem:
     def train_model(self):
         """
         Trains the model using captured images.
+        
+        Workflow:
+        1. Iterate through all .jpg images in 'training_images'.
+        2. Extract the Student ID from the filename (format: Name.ID.SampleNum.jpg).
+        3. Load the image and convert to numpy array.
+        4. Feed all face arrays and corresponding IDs to the LBPH recognizer.
+        5. Train the recognizer.
+        6. Save the trained model state to 'trainer.yml'.
         """
         path = self.data_manager.training_images_dir
         image_paths = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.jpg')]
@@ -166,9 +192,19 @@ class FaceRecognitionSystem:
         self.recognizer.save(self.data_manager.trainer_file)
         return True, "Model trained and saved successfully."
 
-    def generate_frames(self, cam_index=1):
+    def generate_frames(self, cam_index=0):
         """
         Generator that yields frames and recognized students for Streamlit.
+        
+        Workflow:
+        1. Load the trained 'trainer.yml' model.
+        2. Open camera and read frames.
+        3. Detect faces in the frame.
+        4. For each face, predict the ID using the recognizer.
+        5. If confidence is high (value is low), valid match: retrieve name.
+        6. Annotate frame with Name/Unknown.
+        7. Yield frame and list of recognized students to UI.
+        
         Yields: (frame_rgb, recognized_students_list)
         """
         if not os.path.exists(self.data_manager.trainer_file):

@@ -4,6 +4,25 @@ import os
 from src.data_handler import DataManager
 from src.face_rec import FaceRecognitionSystem
 
+"""
+Face Recognition Attendance System - Main Application
+
+Application Workflow:
+1.  **Dashboard**: View today's attendance and registered students. Allows clearing data (Danger Zone).
+2.  **Registration**: 
+    -   Enter Student ID and Name.
+    -   Captures 30 face images using `FaceRecognitionSystem.capture_frames`.
+    -   Saves images to `data/training_images`.
+3.  **Training**:
+    -   Triggers model training using captured images via `FaceRecognitionSystem.train_model`.
+    -   Saves the trained model to `data/models/trainer.yml`.
+4.  **Attendance**:
+    -   Uses the webcam to detect faces in real-time.
+    -   Recognizes students using the trained model.
+    -   Maintains a session state list of recognized students.
+    -   Allows saving the list to the daily attendance CSV file.
+"""
+
 
 st.set_page_config(page_title="Face Attendance System", layout="wide")
 
