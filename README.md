@@ -50,7 +50,7 @@ Face_recognition_based_attendance_system/
 
 1.  **Clone the Repository**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/Starbond70/face-recognition-LBPH.git
     cd Face_recognition_based_attendance_system
     ```
 
