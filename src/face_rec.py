@@ -22,7 +22,7 @@ class FaceRecognitionSystem:
         self.detector = cv2.CascadeClassifier(self.cascade_path)
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-    def capture_images(self, student_id, name, limit=30, cam_index=0):
+    def capture_images(self, student_id, name, limit=30, cam_index=1):
         """
         Captures images for training.
         Returns: (success, message)
@@ -64,7 +64,7 @@ class FaceRecognitionSystem:
 
         return True, f"Captured {sample_num} images for {name}."
 
-    def capture_frames(self, student_id, name, limit=30, cam_index=0):
+    def capture_frames(self, student_id, name, limit=30, cam_index=1):
         """
         Generator that yields frames and progress for Streamlit registration.
         
@@ -121,7 +121,7 @@ class FaceRecognitionSystem:
         finally:
             cam.release()
 
-    def preview_frames(self, cam_index=0):
+    def preview_frames(self, cam_index=1):
         """
         Generator that yields frames for preview (no saving).
         Yields: frame_rgb
@@ -192,7 +192,7 @@ class FaceRecognitionSystem:
         self.recognizer.save(self.data_manager.trainer_file)
         return True, "Model trained and saved successfully."
 
-    def generate_frames(self, cam_index=0):
+    def generate_frames(self, cam_index=1):
         """
         Generator that yields frames and recognized students for Streamlit.
         
